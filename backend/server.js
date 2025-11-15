@@ -30,7 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
-      "https://campus-cart-delta.vercel.app/", // replace with actual Vercel URL
+      "https://campus-cart-delta.vercel.app", // replace with actual Vercel URL
     ],
     credentials: true,
   })

@@ -10,14 +10,6 @@ const orderRoutes = require("./routes/orderRoutes");
 
 // Load env vars
 dotenv.config();
-// console.log("Cloudinary Key:", process.env.CLOUDINARY_API_KEY);
-// console.log("Cloudinary Config:", {
-//   name: process.env.CLOUDINARY_CLOUD_NAME,
-//   key: process.env.CLOUDINARY_API_KEY,
-//   secret: process.env.CLOUDINARY_API_SECRET ? "****" : "MISSING",
-// });
-
-// Connect to database
 connectDB();
 
 const app = express();
@@ -25,6 +17,9 @@ const app = express();
 // Body parser middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from public folder
+app.use("/public", express.static("public"));
 
 // Enable CORS
 // Configure CORS whitelist and handling
@@ -42,16 +37,15 @@ app.use(
       if (!origin) return callback(null, true);
       if (whitelist.indexOf(origin) !== -1) {
         return callback(null, true);
-      } else {
-        return callback(new Error("Not allowed by CORS"));
       }
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
 );
 
 // Enable pre-flight across the board
-app.options("*", cors());
+app.options("/{*splat}", cors());
 
 // Fallback: always set common CORS headers (helps if some response skips cors middleware)
 app.use((req, res, next) => {

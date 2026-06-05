@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://via.placeholder.com/150",
+      default: "/public/def-pic.jpg",
     },
     isVerified: {
       type: Boolean,

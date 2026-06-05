@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import API from '../services/api';
+import { getImageUrl } from '../services/imageUrl';
 
 const Item = () => {
     const { id } = useParams();
@@ -221,7 +222,7 @@ const Item = () => {
                                 <h2 className="text-xl font-semibold text-gray-900 mb-3">Seller Information</h2>
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={product.seller?.avatar || 'https://via.placeholder.com/60'}
+                                        src={getImageUrl(product.seller?.avatar)}
                                         alt={product.seller?.name}
                                         className="w-16 h-16 rounded-full object-cover"
                                     />

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import API from '../services/api';
+import { getImageUrl } from '../services/imageUrl';
 
 const Profile = () => {
     const { user, logout } = useContext(AuthContext);
@@ -140,7 +141,7 @@ const Profile = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                                 <img
-                                    src={formData.avatar || 'https://via.placeholder.com/150'}
+                                    src={getImageUrl(formData.avatar)}
                                     alt={formData.name}
                                     className="w-24 h-24 rounded-full border-4 border-white object-cover"
                                 />

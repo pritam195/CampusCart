@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../services/imageUrl';
 
 const ProductCard = ({ product }) => {
     return (
@@ -37,7 +38,7 @@ const ProductCard = ({ product }) => {
 
                 <div className="flex items-center mb-3">
                     <img
-                        src={product.seller?.avatar || 'https://via.placeholder.com/40'}
+                        src={getImageUrl(product.seller?.avatar)}
                         alt={product.seller?.name}
                         className="w-8 h-8 rounded-full mr-2"
                     />

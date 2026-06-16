@@ -3,7 +3,7 @@ const {
   submitFeedback,
   getAllFeedback,
   getMyFeedback,
-  getRecentFeedback, // Add this
+  getRecentFeedback, 
   updateFeedbackStatus,
   deleteFeedback,
 } = require("../controllers/feedbackController");
@@ -12,7 +12,7 @@ const { protect } = require("../middleware/auth");
 const router = express.Router();
 
 router.route("/").post(submitFeedback).get(protect, getAllFeedback);
-router.route("/recent").get(getRecentFeedback); // Add this - BEFORE /my-feedback
+router.route("/recent").get(getRecentFeedback); 
 router.route("/my-feedback").get(protect, getMyFeedback);
 router
   .route("/:id")

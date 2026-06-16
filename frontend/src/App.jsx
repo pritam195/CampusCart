@@ -16,6 +16,7 @@ import Item from './Pages/Item';
 import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
 import MyOrders from './Pages/MyOrders';
+import ChatPage from './Pages/ChatPage';
 
 function App() {
   return (
@@ -45,6 +46,8 @@ function App() {
             <Route path="/edit-product/:id" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+            <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+            <Route path="/chat/:conversationId" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>

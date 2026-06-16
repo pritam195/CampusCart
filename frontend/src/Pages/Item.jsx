@@ -13,7 +13,6 @@ const Item = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedImage, setSelectedImage] = useState(0);
-    const [showContactModal, setShowContactModal] = useState(false);
     const [cartMessage, setCartMessage] = useState('');
 
     useEffect(() => {
@@ -62,6 +61,24 @@ const Item = () => {
         }, 500);
     };
 
+    const handleContactSeller = async () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        try {
+            const { data } = await API.post('/chat/conversations', {
+                productId: product._id
+            });
+            if (data.success) {
+                navigate(`/chat/${data.conversation._id}`);
+            }
+        } catch (error) {
+            console.error('Failed to create/open conversation', error);
+            alert('Failed to start chat with seller.');
+        }
+    };
+
     const getConditionColor = (condition) => {
         switch (condition) {
             case 'New':
@@ -107,59 +124,61 @@ const Item = () => {
         );
     }
 
-    // FIX: Check ownership properly - handle both _id and id fields
+    
     const sellerId = product.seller?._id || product.seller?.id || product.seller;
     const userId = user?._id || user?.id;
     const isOwner = user && sellerId && (sellerId.toString() === userId.toString());
 
-    // Debug logs (remove after testing)
+    
     console.log('Seller ID:', sellerId);
     console.log('User ID:', userId);
     console.log('Is Owner:', isOwner);
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-slate-50 py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Breadcrumb */}
-                <nav className="mb-8 text-sm">
-                    <Link to="/" className="text-gray-500 hover:text-[#ff6a3d]">Home</Link>
-                    <span className="mx-2 text-gray-400">/</span>
-                    <Link to="/products" className="text-gray-500 hover:text-[#ff6a3d]">Products</Link>
-                    <span className="mx-2 text-gray-400">/</span>
-                    <span className="text-gray-900">{product.title}</span>
+                {}
+                <nav className="mb-8 text-sm font-medium">
+                    <Link to="/" className="text-slate-500 hover:text-brand-orange transition-colors">Home</Link>
+                    <span className="mx-3 text-slate-300">/</span>
+                    <Link to="/products" className="text-slate-500 hover:text-brand-orange transition-colors">Products</Link>
+                    <span className="mx-3 text-slate-300">/</span>
+                    <span className="text-slate-900">{product.title}</span>
                 </nav>
 
-                {/* Success Message */}
+                {}
                 {cartMessage && (
-                    <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    <div className="mb-8 bg-emerald-50 border border-emerald-200 text-emerald-700 px-6 py-4 rounded-2xl font-bold shadow-sm flex items-center gap-3">
+                        <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                         {cartMessage}
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Left Column - Images */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    {}
                     <div>
-                        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
+                        <div className="bg-slate-50 rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-4 p-4 flex items-center justify-center h-[500px]">
                             <img
                                 src={product.images?.[selectedImage] || 'https://via.placeholder.com/600x400'}
                                 alt={product.title}
-                                className="w-full h-96 object-cover"
+                                className="max-w-full max-h-full object-contain drop-shadow-md rounded-xl"
                             />
                         </div>
 
                         {product.images && product.images.length > 1 && (
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-4 gap-4">
                                 {product.images.map((image, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setSelectedImage(index)}
-                                        className={`bg-white rounded-lg overflow-hidden border-2 ${selectedImage === index ? 'border-[#ff6a3d]' : 'border-gray-200'
-                                            } hover:border-[#ff6a3d] transition`}
+                                        className={`bg-white p-1 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                                            selectedImage === index ? 'border-brand-orange shadow-md scale-105' : 'border-transparent hover:border-brand-orange/30'
+                                        }`}
                                     >
                                         <img
                                             src={image}
                                             alt={`${product.title} ${index + 1}`}
-                                            className="w-full h-20 object-cover"
+                                            className="w-full h-24 object-contain bg-slate-50 rounded-xl p-1"
                                         />
                                     </button>
                                 ))}
@@ -167,119 +186,124 @@ const Item = () => {
                         )}
                     </div>
 
-                    {/* Right Column - Product Details */}
+                    {}
                     <div>
-                        <div className="bg-white rounded-lg shadow-md p-6">
-                            <div className="mb-4">
-                                <span className="inline-block bg-[#ff6a3d]/10 text-[#ff6a3d] text-sm px-3 py-1 rounded-full mb-2">
+                        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                            <div className="mb-6">
+                                <span className="inline-block bg-brand-orange/10 text-brand-orange font-bold text-xs px-4 py-2 rounded-xl mb-4 uppercase tracking-wider">
                                     {product.category}
                                 </span>
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.title}</h1>
-                                <div className="flex items-center gap-2 text-sm text-gray-600">
-                                    <span className={`px-3 py-1 rounded-full font-medium ${getConditionColor(product.condition)}`}>
+                                <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">{product.title}</h1>
+                                <div className="flex items-center gap-3 text-sm text-slate-500 font-medium">
+                                    <span className={`px-4 py-1.5 rounded-xl font-bold ${getConditionColor(product.condition)}`}>
                                         {product.condition}
                                     </span>
-                                    <span>•</span>
+                                    <span className="text-slate-300">•</span>
                                     <span>{product.views} views</span>
-                                    <span>•</span>
+                                    <span className="text-slate-300">•</span>
                                     <span>Posted {new Date(product.createdAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
 
-                            <div className="mb-6 pb-6 border-b border-gray-200">
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-bold text-[#ff6a3d]">₹{product.price}</span>
-                                    <span className="text-gray-500 text-lg">fixed price</span>
+                            <div className="mb-8 pb-8 border-b border-slate-100">
+                                <div className="flex items-end gap-3">
+                                    <span className="text-5xl font-extrabold text-slate-900">₹{product.price}</span>
+                                    <span className="text-slate-400 font-medium mb-1 border-l-2 border-slate-200 pl-3">fixed price</span>
                                 </div>
                             </div>
 
-                            <div className="mb-6 pb-6 border-b border-gray-200">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-3">Description</h2>
-                                <p className="text-gray-700 whitespace-pre-line">{product.description}</p>
+                            <div className="mb-8 pb-8 border-b border-slate-100">
+                                <h2 className="text-xl font-bold text-slate-900 mb-4">Description</h2>
+                                <p className="text-slate-600 leading-relaxed whitespace-pre-line text-lg">{product.description}</p>
                             </div>
 
-                            <div className="mb-6 pb-6 border-b border-gray-200">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-3">Details</h2>
-                                <div className="space-y-2">
+                            <div className="mb-8 pb-8 border-b border-slate-100">
+                                <h2 className="text-xl font-bold text-slate-900 mb-4">Details</h2>
+                                <div className="space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-100">
                                     {product.location && (
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600">Location:</span>
-                                            <span className="font-medium text-gray-900">{product.location}</span>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-slate-500 font-medium">Location</span>
+                                            <span className="font-bold text-slate-900">{product.location}</span>
                                         </div>
                                     )}
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Condition:</span>
-                                        <span className="font-medium text-gray-900">{product.condition}</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-slate-500 font-medium">Condition</span>
+                                        <span className="font-bold text-slate-900">{product.condition}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Status:</span>
-                                        <span className="font-medium text-green-600">{product.status}</span>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-slate-500 font-medium">Status</span>
+                                        <span className="font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">{product.status}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="mb-6 pb-6 border-b border-gray-200">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-3">Seller Information</h2>
-                                <div className="flex items-center gap-4">
+                            <div className="mb-8 pb-8 border-b border-slate-100">
+                                <h2 className="text-xl font-bold text-slate-900 mb-4">Seller Information</h2>
+                                <div className="flex items-center gap-5 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
                                     <img
                                         src={getImageUrl(product.seller?.avatar)}
                                         alt={product.seller?.name}
-                                        className="w-16 h-16 rounded-full object-cover"
+                                        className="w-16 h-16 rounded-2xl object-cover ring-2 ring-brand-orange/20"
                                     />
                                     <div>
-                                        <h3 className="font-semibold text-gray-900">{product.seller?.name}</h3>
-                                        {/* <p className="text-sm text-gray-600">{product.seller?.university}</p> */}
-                                        <p className="text-sm text-gray-600">{product.seller?.email}</p>
+                                        <h3 className="font-bold text-slate-900 text-lg mb-1">{product.seller?.name}</h3>
+                                        <p className="text-sm font-medium text-slate-500 flex items-center gap-2">
+                                            <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                            {product.seller?.email}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Action Buttons */}
+                            {}
                             {!isOwner && product.status === 'Available' && (
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     <button
                                         onClick={handleBuyNow}
-                                        className="w-full bg-[#ff6a3d] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2d] transition"
+                                        className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold text-lg hover:bg-brand-orange hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-1 transition-all duration-300"
                                     >
                                         Buy Now
                                     </button>
-                                    <button
-                                        onClick={handleAddToCart}
-                                        className="w-full bg-white border-2 border-[#ff6a3d] text-[#ff6a3d] py-3 rounded-lg font-semibold hover:bg-[#ff6a3d] hover:text-white transition"
-                                    >
-                                        Add to Cart
-                                    </button>
-                                    <button
-                                        onClick={() => setShowContactModal(true)}
-                                        className="w-full bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-                                    >
-                                        Contact Seller
-                                    </button>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            onClick={handleAddToCart}
+                                            className="w-full bg-white border-2 border-slate-200 text-slate-700 py-3.5 rounded-2xl font-bold hover:border-brand-orange hover:text-brand-orange hover:bg-brand-orange/5 transition-colors"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                        <button
+                                            onClick={handleContactSeller}
+                                            className="w-full bg-slate-100 text-slate-700 py-3.5 rounded-2xl font-bold hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                                        >
+                                            Contact Seller
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
                             {isOwner && (
-                                <div className="space-y-3">
-                                    <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg text-center">
-                                        This is your listing
+                                <div className="space-y-4">
+                                    <div className="bg-indigo-50 border border-indigo-200 text-indigo-700 px-4 py-3 rounded-2xl text-center font-bold">
+                                        ✨ This is your listing
                                     </div>
                                     <Link
                                         to={`/edit-product/${product._id}`}
-                                        className="block w-full bg-[#ff6a3d] text-white py-3 rounded-lg font-semibold text-center hover:bg-[#e55a2d] transition"
+                                        className="block w-full bg-gradient-to-r from-brand-orange to-rose-500 text-white py-4 rounded-2xl font-bold text-lg text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
                                     >
                                         Edit Listing
                                     </Link>
                                     <Link
                                         to="/my-listings"
-                                        className="block w-full bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold text-center hover:bg-gray-200 transition"
+                                        className="block w-full bg-slate-100 text-slate-700 py-4 rounded-2xl font-bold text-center hover:bg-slate-200 transition-colors"
                                     >
-                                        View My Listings
+                                        View All My Listings
                                     </Link>
                                 </div>
                             )}
 
                             {product.status !== 'Available' && !isOwner && (
-                                <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-center">
+                                <div className="bg-slate-100 border border-slate-200 text-slate-600 px-6 py-4 rounded-2xl text-center font-bold flex items-center justify-center gap-3">
+                                    <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                                     This item is no longer available
                                 </div>
                             )}
@@ -288,42 +312,6 @@ const Item = () => {
                 </div>
             </div>
 
-            {/* Contact Seller Modal */}
-            {showContactModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">Contact Seller</h3>
-                        <div className="space-y-3 mb-6">
-                            <p className="text-gray-700">
-                                <strong>Name:</strong> {product.seller?.name}
-                            </p>
-                            <p className="text-gray-700">
-                                <strong>Email:</strong>{' '}
-                                <a href={`mailto:${product.seller?.email}`} className="text-[#ff6a3d] hover:underline">
-                                    {product.seller?.email}
-                                </a>
-                            </p>
-                            {product.seller?.phone && (
-                                <p className="text-gray-700">
-                                    <strong>Phone:</strong>{' '}
-                                    <a href={`tel:${product.seller?.phone}`} className="text-[#ff6a3d] hover:underline">
-                                        {product.seller?.phone}
-                                    </a>
-                                </p>
-                            )}
-                            <p className="text-gray-700">
-                                <strong>University:</strong> {product.seller?.university}
-                            </p>
-                        </div>
-                        <button
-                            onClick={() => setShowContactModal(false)}
-                            className="w-full bg-[#ff6a3d] text-white py-2 rounded-lg font-medium hover:bg-[#e55a2d] transition"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

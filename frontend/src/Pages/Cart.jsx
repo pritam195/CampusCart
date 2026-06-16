@@ -36,33 +36,29 @@ const Cart = () => {
     };
 
     const handleCheckout = () => {
-        // Implement checkout logic
+        
         alert('Checkout functionality will be implemented');
     };
 
     if (cart.length === 0) {
         return (
-            <div className="min-h-screen bg-gray-50 py-12">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center">
-                        <svg
-                            className="mx-auto h-24 w-24 text-gray-400 mb-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                            />
-                        </svg>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h2>
-                        <p className="text-gray-600 mb-6">Add some items to get started!</p>
+            <div className="min-h-screen bg-slate-50 py-12 relative overflow-hidden flex items-center justify-center">
+                {}
+                <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+                <div className="absolute bottom-20 -right-20 w-72 h-72 bg-rose-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+                <div className="max-w-md w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                    <div className="bg-white/80 backdrop-blur-xl border border-white p-10 rounded-3xl shadow-2xl shadow-brand-orange/10">
+                        <span className="inline-block p-4 rounded-full bg-slate-50 text-slate-400 mb-6 border-2 border-slate-100 border-dashed">
+                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                        </span>
+                        <h2 className="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">Your cart is empty</h2>
+                        <p className="text-slate-500 font-medium mb-8">Looks like you haven't added anything yet.</p>
                         <Link
                             to="/products"
-                            className="inline-block bg-[#ff6a3d] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#e55a2d] transition"
+                            className="inline-flex items-center justify-center w-full bg-gradient-to-r from-brand-orange to-rose-500 text-white px-6 py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-0.5 transition-all duration-300"
                         >
                             Browse Products
                         </Link>
@@ -73,54 +69,71 @@ const Cart = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+        <div className="min-h-screen bg-slate-50 py-12 relative overflow-hidden">
+            {}
+            <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div className="absolute bottom-20 -right-20 w-72 h-72 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="flex items-center gap-3 mb-8">
+                    <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Shopping Cart</h1>
+                    <span className="bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full text-sm font-bold">
+                        {cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} items
+                    </span>
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Cart Items */}
+                    {}
                     <div className="lg:col-span-2 space-y-4">
                         {cart.map((item) => (
-                            <div key={item._id} className="bg-white rounded-lg shadow-md p-4">
-                                <div className="flex gap-4">
-                                    <img
-                                        src={item.images?.[0] || 'https://via.placeholder.com/100'}
-                                        alt={item.title}
-                                        className="w-24 h-24 object-cover rounded-lg"
-                                    />
-                                    <div className="flex-1">
-                                        <Link
-                                            to={`/products/${item._id}`}
-                                            className="text-lg font-semibold text-gray-900 hover:text-[#ff6a3d]"
-                                        >
-                                            {item.title}
-                                        </Link>
-                                        <p className="text-sm text-gray-600">{item.category}</p>
-                                        <p className="text-lg font-bold text-[#ff6a3d] mt-2">₹{item.price}</p>
+                            <div key={item._id} className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-shadow p-5 group">
+                                <div className="flex gap-5">
+                                    <div className="relative">
+                                        <img
+                                            src={item.images?.[0] || 'https://via.placeholder.com/100'}
+                                            alt={item.title}
+                                            className="w-32 h-32 object-cover rounded-2xl bg-slate-50"
+                                        />
+                                        <div className="absolute inset-0 ring-1 ring-inset ring-slate-900/10 rounded-2xl"></div>
                                     </div>
-                                    <div className="flex flex-col items-end justify-between">
-                                        <button
-                                            onClick={() => removeFromCart(item._id)}
-                                            className="text-red-500 hover:text-red-700"
-                                        >
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                        <div className="flex items-center gap-2">
+                                    <div className="flex-1 flex flex-col justify-between py-1">
+                                        <div className="flex justify-between items-start gap-4">
+                                            <div>
+                                                <Link
+                                                    to={`/products/${item._id}`}
+                                                    className="text-xl font-bold text-slate-900 hover:text-brand-orange transition-colors line-clamp-1"
+                                                >
+                                                    {item.title}
+                                                </Link>
+                                                <p className="text-sm font-medium text-slate-500 mt-1">{item.category}</p>
+                                            </div>
                                             <button
-                                                onClick={() => updateQuantity(item._id, (item.quantity || 1) - 1)}
-                                                className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
+                                                onClick={() => removeFromCart(item._id)}
+                                                className="text-slate-400 hover:text-rose-500 bg-slate-50 hover:bg-rose-50 p-2 rounded-xl transition-colors"
                                             >
-                                                -
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
-                                            <span className="font-medium">{item.quantity || 1}</span>
-                                            <button
-                                                onClick={() => updateQuantity(item._id, (item.quantity || 1) + 1)}
-                                                className="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300"
-                                            >
-                                                +
-                                            </button>
+                                        </div>
+                                        <div className="flex justify-between items-end mt-4">
+                                            <p className="text-2xl font-black text-slate-900">₹{item.price}</p>
+                                            
+                                            <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded-xl p-1">
+                                                <button
+                                                    onClick={() => updateQuantity(item._id, (item.quantity || 1) - 1)}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm transition-all"
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="w-8 text-center font-bold text-slate-900">{item.quantity || 1}</span>
+                                                <button
+                                                    onClick={() => updateQuantity(item._id, (item.quantity || 1) + 1)}
+                                                    className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm transition-all"
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -128,43 +141,44 @@ const Cart = () => {
                         ))}
                     </div>
 
-                    {/* Order Summary */}
+                    {}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
-                            <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
+                        <div className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-2xl shadow-brand-orange/5 p-8 sticky top-24">
+                            <h2 className="text-2xl font-extrabold text-slate-900 mb-6 tracking-tight">Order Summary</h2>
 
-                            <div className="space-y-3 mb-4">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Subtotal</span>
-                                    <span className="font-medium">₹{calculateTotal()}</span>
+                            <div className="space-y-4 mb-6">
+                                <div className="flex justify-between items-center text-slate-500 font-medium">
+                                    <span>Subtotal</span>
+                                    <span className="text-slate-900 font-bold">₹{calculateTotal()}</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-600">Items</span>
-                                    <span className="font-medium">{cart.reduce((sum, item) => sum + (item.quantity || 1), 0)}</span>
-                                </div>
-                            </div>
-
-                            <div className="border-t border-gray-200 pt-4 mb-6">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-semibold text-gray-900">Total</span>
-                                    <span className="text-2xl font-bold text-[#ff6a3d]">₹{calculateTotal()}</span>
+                                <div className="flex justify-between items-center text-slate-500 font-medium">
+                                    <span>Shipping</span>
+                                    <span className="text-slate-900 font-bold">Free</span>
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => navigate('/checkout')}
-                                className="w-full bg-[#ff6a3d] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2d] transition mb-3"
-                            >
-                                Proceed to Checkout
-                            </button>
+                            <div className="border-t border-slate-100 pt-6 mb-8">
+                                <div className="flex justify-between items-end">
+                                    <span className="text-slate-900 font-bold">Total</span>
+                                    <span className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-orange to-rose-500">₹{calculateTotal()}</span>
+                                </div>
+                            </div>
 
+                            <div className="space-y-3">
+                                <button
+                                    onClick={() => navigate('/checkout')}
+                                    className="w-full bg-gradient-to-r from-brand-orange to-rose-500 text-white py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-0.5 transition-all duration-300"
+                                >
+                                    Proceed to Checkout
+                                </button>
 
-                            <Link
-                                to="/products"
-                                className="block w-full text-center bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold hover:bg-gray-200 transition"
-                            >
-                                Continue Shopping
-                            </Link>
+                                <Link
+                                    to="/products"
+                                    className="block w-full text-center bg-slate-50 text-slate-700 py-4 rounded-xl font-bold border-2 border-slate-100 hover:bg-white hover:border-slate-200 transition-colors"
+                                >
+                                    Continue Shopping
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>

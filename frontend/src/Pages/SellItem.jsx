@@ -39,7 +39,7 @@ const SellItem = () => {
 
         setImages((prev) => [...prev, ...files]);
 
-        // Create image previews
+        
         files.forEach((file) => {
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -68,7 +68,7 @@ const SellItem = () => {
             formDataToSend.append('condition', formData.condition);
             formDataToSend.append('location', formData.location);
 
-            // Append images
+            
             images.forEach((image) => {
                 formDataToSend.append('images', image);
             });
@@ -96,22 +96,33 @@ const SellItem = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-6">Sell Your Item</h1>
+        <div className="min-h-screen bg-slate-50 py-12 relative overflow-hidden">
+            {}
+            <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div className="absolute bottom-20 -right-20 w-72 h-72 bg-rose-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-2xl shadow-brand-orange/10 p-6 md:p-10">
+                    <div className="text-center mb-10">
+                        <span className="inline-block p-3 rounded-2xl bg-brand-orange/10 text-brand-orange mb-4">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                        </span>
+                        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Sell Your Item</h1>
+                        <p className="mt-2 text-slate-500 font-medium">Post your item for the campus community</p>
+                    </div>
 
                     {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+                        <div className="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 mb-8">
+                            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Title */}
+                        {}
                         <div>
-                            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                                Title <span className="text-red-500">*</span>
+                            <label htmlFor="title" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                Title <span className="text-rose-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -120,15 +131,15 @@ const SellItem = () => {
                                 required
                                 value={formData.title}
                                 onChange={handleChange}
-                                placeholder="Enter item title"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                placeholder="What are you selling?"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium placeholder:text-slate-400"
                             />
                         </div>
 
-                        {/* Description */}
+                        {}
                         <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                                Description <span className="text-red-500">*</span>
+                            <label htmlFor="description" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                Description <span className="text-rose-500">*</span>
                             </label>
                             <textarea
                                 id="description"
@@ -137,15 +148,15 @@ const SellItem = () => {
                                 rows="4"
                                 value={formData.description}
                                 onChange={handleChange}
-                                placeholder="Describe your item in detail"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                placeholder="Describe your item in detail (condition, age, features, etc.)"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium placeholder:text-slate-400"
                             />
                         </div>
 
-                        {/* Price */}
+                        {}
                         <div>
-                            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-2">
-                                Price (₹) <span className="text-red-500">*</span>
+                            <label htmlFor="price" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                Price (₹) <span className="text-rose-500">*</span>
                             </label>
                             <input
                                 type="number"
@@ -155,16 +166,16 @@ const SellItem = () => {
                                 min="0"
                                 value={formData.price}
                                 onChange={handleChange}
-                                placeholder="Enter price"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                placeholder="0.00"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium placeholder:text-slate-400 font-mono text-lg"
                             />
                         </div>
 
-                        {/* Category and Condition */}
+                        {}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Category <span className="text-red-500">*</span>
+                                <label htmlFor="category" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                    Category <span className="text-rose-500">*</span>
                                 </label>
                                 <select
                                     id="category"
@@ -172,7 +183,7 @@ const SellItem = () => {
                                     required
                                     value={formData.category}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
                                 >
                                     {categories.map((cat) => (
                                         <option key={cat} value={cat}>
@@ -183,8 +194,8 @@ const SellItem = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="condition" className="block text-sm font-medium text-gray-700 mb-2">
-                                    Condition <span className="text-red-500">*</span>
+                                <label htmlFor="condition" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                    Condition <span className="text-rose-500">*</span>
                                 </label>
                                 <select
                                     id="condition"
@@ -192,7 +203,7 @@ const SellItem = () => {
                                     required
                                     value={formData.condition}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
                                 >
                                     {conditions.map((cond) => (
                                         <option key={cond} value={cond}>
@@ -203,10 +214,10 @@ const SellItem = () => {
                             </div>
                         </div>
 
-                        {/* Location */}
+                        {}
                         <div>
-                            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                                Location
+                            <label htmlFor="location" className="block text-sm font-bold text-slate-700 mb-1.5">
+                                Location (Optional)
                             </label>
                             <input
                                 type="text"
@@ -215,20 +226,20 @@ const SellItem = () => {
                                 value={formData.location}
                                 onChange={handleChange}
                                 placeholder="e.g., Main Campus, Hostel Block A"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium placeholder:text-slate-400"
                             />
                         </div>
 
-                        {/* Image Upload */}
+                        {}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            <label className="block text-sm font-bold text-slate-700 mb-1.5">
                                 Images (Max 5)
                             </label>
                             <div className="mt-2">
-                                <label className="flex justify-center px-6 py-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-[#ff6a3d] transition">
-                                    <div className="text-center">
+                                <label className="flex flex-col items-center justify-center px-6 py-10 border-2 border-dashed border-slate-300 rounded-2xl cursor-pointer bg-slate-50 hover:bg-brand-orange/5 hover:border-brand-orange transition-all duration-300 group">
+                                    <div className="p-4 bg-white rounded-full shadow-sm group-hover:scale-110 transition-transform mb-4">
                                         <svg
-                                            className="mx-auto h-12 w-12 text-gray-400"
+                                            className="h-8 w-8 text-brand-orange"
                                             stroke="currentColor"
                                             fill="none"
                                             viewBox="0 0 48 48"
@@ -240,11 +251,11 @@ const SellItem = () => {
                                                 strokeLinejoin="round"
                                             />
                                         </svg>
-                                        <p className="mt-2 text-sm text-gray-600">
-                                            Click to upload images
-                                        </p>
-                                        <p className="text-xs text-gray-500">PNG, JPG up to 5MB</p>
                                     </div>
+                                    <p className="text-sm font-bold text-slate-700 mb-1">
+                                        Click to upload images
+                                    </p>
+                                    <p className="text-xs text-slate-500 font-medium">PNG, JPG up to 5MB</p>
                                     <input
                                         type="file"
                                         multiple
@@ -255,56 +266,65 @@ const SellItem = () => {
                                 </label>
                             </div>
 
-                            {/* Image Previews */}
+                            {}
                             {imagePreviews.length > 0 && (
-                                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+                                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                     {imagePreviews.map((preview, index) => (
-                                        <div key={index} className="relative">
+                                        <div key={index} className="relative group rounded-xl overflow-hidden shadow-sm border border-slate-200">
                                             <img
                                                 src={preview}
                                                 alt={`Preview ${index + 1}`}
-                                                className="w-full h-32 object-cover rounded-lg"
+                                                className="w-full h-24 object-cover"
                                             />
-                                            <button
-                                                type="button"
-                                                onClick={() => removeImage(index)}
-                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
-                                            >
-                                                <svg
-                                                    className="w-4 h-4"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="bg-white text-rose-500 rounded-full p-2 hover:bg-rose-500 hover:text-white transition-colors"
                                                 >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth={2}
-                                                        d="M6 18L18 6M6 6l12 12"
-                                                    />
-                                                </svg>
-                                            </button>
+                                                    <svg
+                                                        className="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M6 18L18 6M6 6l12 12"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
 
-                        {/* Submit Button */}
-                        <div className="flex gap-4">
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                className="flex-1 bg-[#ff6a3d] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2d] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loading ? 'Posting...' : 'Post Item'}
-                            </button>
+                        {}
+                        <div className="flex gap-4 pt-4 border-t border-slate-100">
                             <button
                                 type="button"
                                 onClick={() => navigate(-1)}
-                                className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                                className="px-6 py-4 border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
                             >
                                 Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 bg-gradient-to-r from-brand-orange to-rose-500 text-white py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            >
+                                {loading ? (
+                                    <span className="flex items-center justify-center gap-2">
+                                        <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                        Posting Item...
+                                    </span>
+                                ) : (
+                                    'Post Item'
+                                )}
                             </button>
                         </div>
                     </form>

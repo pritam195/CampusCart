@@ -6,30 +6,7 @@ const Testimonials = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
-    // Fallback testimonials if no feedback in database
-    const fallbackTestimonials = [
-        {
-            name: 'Priya Sharma',
-            role: 'Engineering Student',
-            comment: 'Sold my old textbooks within 2 days! Great platform for students.',
-            rating: 5,
-            avatar: 'PS',
-        },
-        {
-            name: 'Rahul Kumar',
-            role: 'MBA Student',
-            comment: 'Found a laptop at an amazing price. The seller was very responsive.',
-            rating: 5,
-            avatar: 'RK',
-        },
-        {
-            name: 'Ananya Singh',
-            role: 'Law Student',
-            comment: 'Safe and easy to use. Perfect for buying second-hand items on campus.',
-            rating: 5,
-            avatar: 'AS',
-        },
-    ];
+    // Removed hardcoded fallbacks as per user request
 
     useEffect(() => {
         fetchRecentFeedback();
@@ -40,7 +17,7 @@ const Testimonials = () => {
             const { data } = await API.get('/feedback/recent?limit=3');
 
             if (data.success && data.feedback.length > 0) {
-                // Transform feedback data to testimonial format
+                
                 const formattedTestimonials = data.feedback.map((item) => ({
                     name: item.name,
                     role: item.category || 'Student',
@@ -50,13 +27,12 @@ const Testimonials = () => {
                 }));
                 setTestimonials(formattedTestimonials);
             } else {
-                // Use fallback if no feedback available
-                setTestimonials(fallbackTestimonials);
+                setTestimonials([]);
             }
         } catch (err) {
             console.error('Error fetching feedback:', err);
-            // Use fallback on error
-            setTestimonials(fallbackTestimonials);
+            setError('Could not load testimonials.');
+            setTestimonials([]);
         } finally {
             setLoading(false);
         }
@@ -97,34 +73,40 @@ const Testimonials = () => {
 
                 {error && (
                     <div className="text-center mb-8">
-                        <p className="text-red-600">{error}</p>
+                        <p className="text-rose-500">{error}</p>
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {testimonials.map((testimonial, index) => (
-                        <div
-                            key={index}
-                            className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition"
-                        >
-                            <div className="flex items-center mb-4">
-                                <div className="w-12 h-12 bg-[#ff6a3d] rounded-full flex items-center justify-center text-white font-bold mr-4">
-                                    {testimonial.avatar}
+                {!loading && !error && testimonials.length === 0 ? (
+                    <div className="text-center py-10">
+                        <p className="text-slate-500 text-lg">No reviews yet. Check out our Feedback page to be the first!</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {testimonials.map((testimonial, index) => (
+                            <div
+                                key={index}
+                                className="bg-white/80 backdrop-blur-xl border border-white p-8 rounded-3xl shadow-xl shadow-slate-200/50 hover:-translate-y-1 transition-all duration-300"
+                            >
+                                <div className="flex items-center mb-6">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-brand-orange to-rose-500 rounded-full flex items-center justify-center text-white text-lg font-bold mr-4 shadow-md border-2 border-white">
+                                        {testimonial.avatar}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-extrabold text-slate-900">{testimonial.name}</h4>
+                                        <p className="text-sm font-medium text-brand-orange">{testimonial.role}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                                    <p className="text-sm text-gray-600">{testimonial.role}</p>
+                                <div className="flex mb-4 gap-1">
+                                    {[...Array(testimonial.rating)].map((_, i) => (
+                                        <span key={i} className="text-amber-400 text-xl drop-shadow-sm">★</span>
+                                    ))}
                                 </div>
+                                <p className="text-slate-600 italic leading-relaxed">"{testimonial.comment}"</p>
                             </div>
-                            <div className="flex mb-3">
-                                {[...Array(testimonial.rating)].map((_, i) => (
-                                    <span key={i} className="text-yellow-400 text-xl">⭐</span>
-                                ))}
-                            </div>
-                            <p className="text-gray-700 italic line-clamp-3">"{testimonial.comment}"</p>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     );

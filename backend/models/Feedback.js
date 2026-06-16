@@ -5,7 +5,7 @@ const feedbackSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: false, // Allow anonymous feedback
+      required: false, 
     },
     name: {
       type: String,

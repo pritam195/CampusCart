@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const apiBaseURL = import.meta.env.VITE_API_URL || "/api";
-
+const isProduction = import.meta.env.PROD;
+const apiBaseURL = import.meta.env.VITE_API_URL || (isProduction ? "https://campuscart-ckro.onrender.com/api" : "/api");
 const API = axios.create({
   baseURL: apiBaseURL,
 });
 
-// Add token to requests
+
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

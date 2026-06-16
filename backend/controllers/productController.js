@@ -1,9 +1,9 @@
-const Product = require("../models/Products"); // Keep as Products
+const Product = require("../models/Products"); 
 const { cloudinary } = require("../config/cloudinary");
 
-// @desc    Get all products with filters
-// @route   GET /api/products
-// @access  Public
+
+
+
 exports.getProducts = async (req, res) => {
   try {
     const {
@@ -17,51 +17,54 @@ exports.getProducts = async (req, res) => {
       limit = 12,
     } = req.query;
 
-    // Build query
+    
     const query = { status: "Available" };
 
-    // Category filter
+    
     if (category && category !== "all") {
-      query.category = category;
+      
+      query.category = { $regex: new RegExp(`^${category}$`, "i") };
     }
 
-    // Condition filter
+    
     if (condition && condition !== "all") {
-      query.condition = condition;
+      
+      const formattedCondition = condition.replace(/-/g, " ");
+      query.condition = { $regex: new RegExp(`^${formattedCondition}$`, "i") };
     }
 
-    // Price range filter
+    
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Search filter
+    
     if (search) {
       query.$text = { $search: search };
     }
 
-    // Sort options
-    let sortOption = { createdAt: -1 }; // Default: newest first
+    
+    let sortOption = { createdAt: -1 }; 
     if (sort === "price-low") sortOption = { price: 1 };
     if (sort === "price-high") sortOption = { price: -1 };
     if (sort === "oldest") sortOption = { createdAt: 1 };
     if (sort === "newest") sortOption = { createdAt: -1 };
 
-    // Pagination
+    
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Execute query
+    
     const products = await Product.find(query)
       .populate("seller", "name email university avatar")
       .sort(sortOption)
       .skip(skip)
       .limit(limitNum);
 
-    // Get total count for pagination
+    
     const total = await Product.countDocuments(query);
 
     res.status(200).json({
@@ -80,9 +83,9 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// @desc    Get single product
-// @route   GET /api/products/:id
-// @access  Public
+
+
+
 exports.getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
@@ -97,7 +100,7 @@ exports.getProduct = async (req, res) => {
       });
     }
 
-    // Increment views
+    
     product.views += 1;
     await product.save();
 
@@ -113,24 +116,24 @@ exports.getProduct = async (req, res) => {
   }
 };
 
-// @desc    Create new product
-// @route   POST /api/products
-// @access  Private
+
+
+
 exports.createProduct = async (req, res) => {
   try {
     console.log("Files received:", req.files);
     console.log("Files received:", req.files);
     const { title, description, price, category, condition, images, location } =
       req.body;
-    // console.log(images);
-    // Handle images - either from Cloudinary (req.files) or direct URLs
+    
+    
     let productImages = [];
 
     if (req.files && req.files.length > 0) {
-      // From Cloudinary upload
+      
       productImages = req.files.map((file) => file.path);
     } else if (images && Array.isArray(images)) {
-      // From request body (placeholder URLs)
+      
       productImages = images;
     }
 
@@ -145,7 +148,7 @@ exports.createProduct = async (req, res) => {
       seller: req.user._id,
     });
 
-    // Populate seller info
+    
     await product.populate("seller", "name email university avatar");
 
     res.status(201).json({
@@ -161,9 +164,9 @@ exports.createProduct = async (req, res) => {
   }
 };
 
-// @desc    Update product
-// @route   PUT /api/products/:id
-// @access  Private
+
+
+
 exports.updateProduct = async (req, res) => {
   try {
     let product = await Product.findById(req.params.id);
@@ -175,7 +178,7 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
-    // Check if user is the seller
+    
     if (product.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -201,9 +204,9 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-// @desc    Delete product
-// @route   DELETE /api/products/:id
-// @access  Private
+
+
+
 exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -215,7 +218,7 @@ exports.deleteProduct = async (req, res) => {
       });
     }
 
-    // Check if user is the seller
+    
     if (product.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -237,9 +240,9 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
-// @desc    Get user's products
-// @route   GET /api/products/my-listings
-// @access  Private
+
+
+
 exports.getMyListings = async (req, res) => {
   try {
     const products = await Product.find({ seller: req.user._id })
@@ -250,6 +253,34 @@ exports.getMyListings = async (req, res) => {
       success: true,
       count: products.length,
       products,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+exports.getCategoryCounts = async (req, res) => {
+  try {
+    const counts = await Product.aggregate([
+      { $match: { status: "Available" } },
+      { $group: { _id: "$category", count: { $sum: 1 } } }
+    ]);
+
+    
+    const formattedCounts = counts.reduce((acc, curr) => {
+      acc[curr._id] = curr.count;
+      return acc;
+    }, {});
+
+    res.status(200).json({
+      success: true,
+      counts: formattedCounts
     });
   } catch (error) {
     res.status(500).json({

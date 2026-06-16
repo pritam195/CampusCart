@@ -60,7 +60,7 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Index for search optimization
+
 productSchema.index({ title: "text", description: "text" });
 
 module.exports = mongoose.model("Product", productSchema);

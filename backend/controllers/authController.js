@@ -1,21 +1,156 @@
 const User = require("../models/User");
+const OtpVerification = require("../models/OtpVerification");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/emailService");
 
-// Generate JWT Token
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
-// @desc    Register user
-// @route   POST /api/auth/register
-// @access  Public
+
+
+
+exports.sendOtp = async (req, res) => {
+  try {
+    const { name, email, password, university, phone } = req.body;
+
+    
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        message: "User already exists with this email",
+      });
+    }
+
+    
+    const emailOtp = Math.floor(100000 + Math.random() * 900000).toString();
+
+
+    
+    
+    
+    
+    
+    
+
+    
+    await OtpVerification.deleteMany({ email });
+
+    await OtpVerification.create({
+      name,
+      email,
+      password,
+      university,
+      phone,
+      emailOtp,
+
+    });
+
+    
+    
+    const emailSent = await sendEmail({
+      to: email,
+      subject: "CampusCart - Your Registration OTP",
+      text: `Hello ${name},\n\nYour One-Time Password (OTP) for CampusCart registration is: ${emailOtp}\n\nThis OTP will expire in 10 minutes.\n\nWelcome to CampusCart!`
+    });
+
+    if (!emailSent) {
+      console.error(`Failed to send email OTP to ${email}`);
+      
+      
+    }
+
+    
+    console.log(`\n========== OTP GENERATED ==========`);
+    console.log(`Email to: ${email} -> OTP: [ ${emailOtp} ] (Actually Sent via Nodemailer!)`);
+
+    console.log(`===================================\n`);
+
+    res.status(200).json({
+      success: true,
+      message: "OTP sent successfully to your email",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { email, emailOtp } = req.body;
+
+    
+    const pendingUser = await OtpVerification.findOne({ email });
+
+    if (!pendingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired or invalid. Please sign up again.",
+      });
+    }
+
+    
+    if (pendingUser.emailOtp !== emailOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Email OTP",
+      });
+    }
+
+    
+    const user = await User.create({
+      name: pendingUser.name,
+      email: pendingUser.email,
+      password: pendingUser.password, 
+      university: pendingUser.university,
+      phone: pendingUser.phone,
+    });
+
+    
+    await pendingUser.deleteOne();
+
+    
+    const token = generateToken(user._id);
+
+    res.status(201).json({
+      success: true,
+      message: "User registered and verified successfully",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        university: user.university,
+        phone: user.phone,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
 exports.register = async (req, res) => {
   try {
     const { name, email, password, university, phone } = req.body;
 
-    // Check if user exists
+    
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -25,7 +160,7 @@ exports.register = async (req, res) => {
       });
     }
 
-    // Create user
+    
     const user = await User.create({
       name,
       email,
@@ -34,7 +169,7 @@ exports.register = async (req, res) => {
       phone,
     });
 
-    // Generate token
+    
     const token = generateToken(user._id);
 
     res.status(201).json({
@@ -58,14 +193,14 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Login user
-// @route   POST /api/auth/login
-// @access  Public
+
+
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate email & password
+    
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -73,7 +208,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check for user
+    
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
@@ -83,7 +218,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Check if password matches
+    
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
@@ -93,7 +228,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Generate token
+    
     const token = generateToken(user._id);
 
     res.status(200).json({
@@ -117,9 +252,9 @@ exports.login = async (req, res) => {
   }
 };
 
-// @desc    Get current user
-// @route   GET /api/auth/me
-// @access  Private
+
+
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -136,9 +271,9 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/auth/update-profile
-// @access  Private
+
+
+
 exports.updateProfile = async (req, res) => {
   try {
     const { name, email, university, phone, avatar } = req.body;
@@ -152,7 +287,7 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
-    // Check if email is already taken by another user
+    
     if (email !== user.email) {
       const emailExists = await User.findOne({ email });
       if (emailExists) {
@@ -163,11 +298,17 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
+    
+    let avatarUrl = avatar;
+    if (req.file) {
+      avatarUrl = req.file.path;
+    }
+
     user.name = name || user.name;
     user.email = email || user.email;
     user.university = university || user.university;
     user.phone = phone || user.phone;
-    user.avatar = avatar || user.avatar;
+    user.avatar = avatarUrl || user.avatar;
 
     await user.save();
 
@@ -192,9 +333,9 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// @desc    Update password
-// @route   PUT /api/auth/update-password
-// @access  Private
+
+
+
 exports.updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -208,7 +349,7 @@ exports.updatePassword = async (req, res) => {
       });
     }
 
-    // Check current password
+    
     const isMatch = await user.comparePassword(currentPassword);
 
     if (!isMatch) {
@@ -218,7 +359,7 @@ exports.updatePassword = async (req, res) => {
       });
     }
 
-    // Update password
+    
     user.password = newPassword;
     await user.save();
 

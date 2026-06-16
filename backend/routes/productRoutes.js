@@ -7,6 +7,7 @@ const {
   updateProduct,
   deleteProduct,
   getMyListings,
+  getCategoryCounts,
 } = require("../controllers/productController");
 const { protect } = require("../middleware/auth");
 
@@ -14,6 +15,7 @@ const router = express.Router();
 
 router.route("/").get(getProducts);
 router.route("/").post(protect, upload.array("images", 5), createProduct);
+router.route("/categories/count").get(getCategoryCounts);
 router.route("/my-listings").get(protect, getMyListings);
 router
   .route("/:id")

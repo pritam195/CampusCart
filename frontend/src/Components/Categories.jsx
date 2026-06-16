@@ -1,14 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import API from '../services/api';
 
 const Categories = () => {
+    const [counts, setCounts] = useState({});
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const { data } = await API.get('/products/categories/count');
+                if (data.success) {
+                    setCounts(data.counts);
+                }
+            } catch (error) {
+                console.error("Failed to fetch category counts", error);
+            }
+        };
+        fetchCounts();
+    }, []);
+
     const categories = [
-        { name: 'Books', icon: '📚', count: '250+' },
-        { name: 'Electronics', icon: '💻', count: '180+' },
-        { name: 'Furniture', icon: '🪑', count: '120+' },
-        { name: 'Clothing', icon: '👕', count: '300+' },
-        { name: 'Sports', icon: '⚽', count: '90+' },
-        { name: 'Stationery', icon: '✏️', count: '150+' },
+        { name: 'Books', icon: '📚' },
+        { name: 'Electronics', icon: '💻' },
+        { name: 'Furniture', icon: '🪑' },
+        { name: 'Clothing', icon: '👕' },
+        { name: 'Sports', icon: '⚽' },
+        { name: 'Stationery', icon: '✏️' },
     ];
 
     return (
@@ -24,17 +41,20 @@ const Categories = () => {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-                    {categories.map((category, index) => (
-                        <Link
-                            key={index}
-                            to={`/products?category=${category.name.toLowerCase()}`}
-                            className="bg-gray-50 p-6 rounded-xl text-center hover:shadow-lg hover:scale-105 transition-all border-2 border-transparent hover:border-[#ff6a3d]"
-                        >
-                            <div className="text-5xl mb-3">{category.icon}</div>
-                            <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
-                            <p className="text-sm text-gray-500">{category.count} items</p>
-                        </Link>
-                    ))}
+                    {categories.map((category, index) => {
+                        const count = counts[category.name] || 0;
+                        return (
+                            <Link
+                                key={index}
+                                to={`/products?category=${category.name.toLowerCase()}`}
+                                className="bg-gray-50 p-6 rounded-xl text-center hover:shadow-lg hover:scale-105 transition-all border-2 border-transparent hover:border-[#ff6a3d]"
+                            >
+                                <div className="text-5xl mb-3">{category.icon}</div>
+                                <h3 className="font-semibold text-gray-900 mb-1">{category.name}</h3>
+                                <p className="text-sm text-gray-500">{count} {count === 1 ? 'item' : 'items'}</p>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
         </section>

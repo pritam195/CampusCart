@@ -1,8 +1,8 @@
 const Feedback = require("../models/Feedback");
 
-// @desc    Submit feedback
-// @route   POST /api/feedback
-// @access  Public
+
+
+
 exports.submitFeedback = async (req, res) => {
   try {
     const { name, email, rating, category, subject, message, isAnonymous } =
@@ -32,9 +32,9 @@ exports.submitFeedback = async (req, res) => {
   }
 };
 
-// @desc    Get all feedback (Admin only)
-// @route   GET /api/feedback
-// @access  Private/Admin
+
+
+
 exports.getAllFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.find()
@@ -54,9 +54,9 @@ exports.getAllFeedback = async (req, res) => {
   }
 };
 
-// @desc    Get user's own feedback
-// @route   GET /api/feedback/my-feedback
-// @access  Private
+
+
+
 exports.getMyFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.find({ user: req.user._id }).sort({
@@ -76,9 +76,9 @@ exports.getMyFeedback = async (req, res) => {
   }
 };
 
-// @desc    Update feedback status (Admin only)
-// @route   PUT /api/feedback/:id
-// @access  Private/Admin
+
+
+
 exports.updateFeedbackStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -109,9 +109,9 @@ exports.updateFeedbackStatus = async (req, res) => {
   }
 };
 
-// @desc    Delete feedback
-// @route   DELETE /api/feedback/:id
-// @access  Private
+
+
+
 exports.deleteFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.findById(req.params.id);
@@ -123,7 +123,7 @@ exports.deleteFeedback = async (req, res) => {
       });
     }
 
-    // Check if user is the owner
+    
     if (feedback.user && feedback.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -146,14 +146,14 @@ exports.deleteFeedback = async (req, res) => {
 };
 
 
-// @desc    Get recent positive feedback for testimonials
-// @route   GET /api/feedback/recent
-// @access  Public
+
+
+
 exports.getRecentFeedback = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 3;
     
-    // Get recent feedback with rating >= 4, not anonymous
+    
     const feedback = await Feedback.find({
       rating: { $gte: 4 },
       isAnonymous: false,

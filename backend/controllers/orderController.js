@@ -2,9 +2,9 @@ const Order = require("../models/Order");
 const Product = require("../models/Products");
 const Cart = require("../models/Cart");
 
-// @desc    Create order with meeting details
-// @route   POST /api/orders
-// @access  Private
+
+
+
 exports.createOrder = async (req, res) => {
   try {
     const { items, meetingDetails, paymentMethod } = req.body;
@@ -18,7 +18,7 @@ exports.createOrder = async (req, res) => {
 
     const orders = [];
 
-    // Create separate orders for each product (since different sellers)
+    
     for (const item of items) {
       const product = await Product.findById(item.productId);
 
@@ -33,7 +33,7 @@ exports.createOrder = async (req, res) => {
         });
       }
 
-      // Create order
+      
       const order = await Order.create({
         buyer: req.user._id,
         seller: product.seller,
@@ -45,20 +45,20 @@ exports.createOrder = async (req, res) => {
         status: "Pending",
       });
 
-      // Update product status to Reserved
+      
       product.status = "Reserved";
       await product.save();
 
       orders.push(order);
     }
 
-    // Clear cart after order
+    
     await Cart.findOneAndUpdate(
       { user: req.user._id },
       { items: [], totalAmount: 0 }
     );
 
-    // Populate order details
+    
     const populatedOrders = await Order.find({
       _id: { $in: orders.map((o) => o._id) },
     })
@@ -79,9 +79,9 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// @desc    Get buyer's orders
-// @route   GET /api/orders/buyer
-// @access  Private
+
+
+
 exports.getBuyerOrders = async (req, res) => {
   try {
     const orders = await Order.find({ buyer: req.user._id })
@@ -102,9 +102,9 @@ exports.getBuyerOrders = async (req, res) => {
   }
 };
 
-// @desc    Get seller's orders
-// @route   GET /api/orders/seller
-// @access  Private
+
+
+
 exports.getSellerOrders = async (req, res) => {
   try {
     const orders = await Order.find({ seller: req.user._id })
@@ -125,9 +125,9 @@ exports.getSellerOrders = async (req, res) => {
   }
 };
 
-// @desc    Get single order
-// @route   GET /api/orders/:id
-// @access  Private
+
+
+
 exports.getOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
@@ -142,7 +142,7 @@ exports.getOrder = async (req, res) => {
       });
     }
 
-    // Check if user is buyer or seller
+    
     if (
       order.buyer._id.toString() !== req.user._id.toString() &&
       order.seller._id.toString() !== req.user._id.toString()
@@ -165,9 +165,9 @@ exports.getOrder = async (req, res) => {
   }
 };
 
-// @desc    Update order status (seller confirms, marks complete)
-// @route   PUT /api/orders/:id/status
-// @access  Private
+
+
+
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -180,7 +180,7 @@ exports.updateOrderStatus = async (req, res) => {
       });
     }
 
-    // Only seller can update status
+    
     if (order.seller.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
@@ -190,7 +190,7 @@ exports.updateOrderStatus = async (req, res) => {
 
     order.status = status;
 
-    // If completed, update product status to Sold and remove from availability
+    
     if (status === "Completed") {
       order.completedAt = Date.now();
       const product = await Product.findById(order.product);
@@ -200,7 +200,7 @@ exports.updateOrderStatus = async (req, res) => {
       }
     }
 
-    // If cancelled, make product available again
+    
     if (status === "Cancelled") {
       const product = await Product.findById(order.product);
       if (product) {
@@ -229,9 +229,9 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-// @desc    Cancel order (buyer or seller)
-// @route   DELETE /api/orders/:id
-// @access  Private
+
+
+
 exports.cancelOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -243,7 +243,7 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    // Check if user is buyer or seller
+    
     if (
       order.buyer.toString() !== req.user._id.toString() &&
       order.seller.toString() !== req.user._id.toString()
@@ -254,7 +254,7 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
-    // Can only cancel if pending or confirmed
+    
     if (order.status === "Completed") {
       return res.status(400).json({
         success: false,
@@ -265,7 +265,7 @@ exports.cancelOrder = async (req, res) => {
     order.status = "Cancelled";
     await order.save();
 
-    // Make product available again
+    
     const product = await Product.findById(order.product);
     if (product) {
       product.status = "Available";

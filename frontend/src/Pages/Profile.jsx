@@ -61,14 +61,23 @@ const Profile = () => {
         setLoading(true);
 
         try {
-            const { data } = await API.put('/auth/update-profile', formData);
+            const submitData = new FormData();
+            submitData.append('name', formData.name);
+            submitData.append('email', formData.email);
+            submitData.append('university', formData.university);
+            submitData.append('phone', formData.phone);
+            if (formData.avatar instanceof File) {
+                submitData.append('avatar', formData.avatar);
+            }
+
+            const { data } = await API.put('/auth/update-profile', submitData);
 
             if (data.success) {
                 setSuccess('Profile updated successfully!');
                 setIsEditing(false);
 
-                // Update user in context and localStorage
-                const updatedUser = { ...user, ...formData };
+                
+                const updatedUser = data.user;
                 localStorage.setItem('user', JSON.stringify(updatedUser));
             }
         } catch (err) {
@@ -133,185 +142,206 @@ const Profile = () => {
     if (!user) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="min-h-screen bg-slate-50 py-12 relative overflow-hidden">
+            {/* Background Decorative Blobs */}
+            <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+            <div className="absolute bottom-20 -right-20 w-72 h-72 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-2xl shadow-brand-orange/10 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-[#ff6a3d] to-[#ff8c5a] px-6 py-8">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                                <img
-                                    src={getImageUrl(formData.avatar)}
-                                    alt={formData.name}
-                                    className="w-24 h-24 rounded-full border-4 border-white object-cover"
-                                />
-                                <div className="text-white">
-                                    <h1 className="text-2xl font-bold">{formData.name}</h1>
-                                    <p className="text-white/90">{formData.email}</p>
-                                    <p className="text-white/80 text-sm mt-1">{formData.university}</p>
+                    <div className="bg-gradient-to-r from-brand-orange to-rose-500 px-8 py-10 relative overflow-hidden">
+                        {/* Header Background Pattern */}
+                        <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+                        
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between relative z-10 gap-6">
+                            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-6">
+                                <div className="relative group">
+                                    <img
+                                        src={formData.avatar instanceof File ? URL.createObjectURL(formData.avatar) : getImageUrl(formData.avatar)}
+                                        alt={formData.name}
+                                        className="w-32 h-32 rounded-2xl ring-4 ring-white/50 object-cover shadow-xl group-hover:scale-105 transition-transform duration-300 bg-white"
+                                    />
+                                    {isEditing && (
+                                        <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                                            <svg className="w-8 h-8 text-white drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                name="avatar"
+                                                onChange={(e) => setFormData(prev => ({...prev, avatar: e.target.files[0]}))}
+                                                className="hidden"
+                                            />
+                                        </label>
+                                    )}
+                                </div>
+                                <div className="text-white text-center sm:text-left">
+                                    <h1 className="text-3xl font-extrabold tracking-tight mb-1">{formData.name}</h1>
+                                    <p className="text-white/90 font-medium flex items-center justify-center sm:justify-start gap-2 mb-2">
+                                        <svg className="w-4 h-4 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                        {formData.email}
+                                    </p>
+                                    <p className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-lg text-white/90 text-sm font-semibold shadow-sm">
+                                        {formData.university}
+                                    </p>
                                 </div>
                             </div>
                             <button
                                 onClick={logout}
-                                className="bg-white text-[#ff6a3d] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition"
+                                className="bg-white/10 hover:bg-white text-white hover:text-rose-500 px-5 py-2.5 rounded-xl font-bold backdrop-blur-sm transition-all shadow-sm border border-white/20 hover:border-transparent flex items-center gap-2 group"
                             >
+                                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
                                 Logout
                             </button>
                         </div>
                     </div>
 
-                    {/* Messages */}
-                    <div className="px-6 py-4">
+                    {}
+                    <div className="px-8 pt-6">
                         {error && (
-                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            <div className="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 mb-2">
+                                <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 {error}
                             </div>
                         )}
                         {success && (
-                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 mb-2">
+                                <svg className="w-5 h-5 flex-shrink-0 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                 {success}
                             </div>
                         )}
                     </div>
 
-                    {/* Profile Information */}
-                    <div className="px-6 pb-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold text-gray-900">Profile Information</h2>
+                    {}
+                    <div className="p-8">
+                        <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
+                            <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Personal Details</h2>
                             {!isEditing && (
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="bg-[#ff6a3d] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#e55a2d] transition"
+                                    className="bg-brand-orange/10 text-brand-orange px-5 py-2.5 rounded-xl font-bold hover:bg-brand-orange hover:text-white transition-colors flex items-center gap-2"
                                 >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                                     Edit Profile
                                 </button>
                             )}
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Name */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Full Name
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
-                                    />
-                                ) : (
-                                    <p className="text-gray-900 text-lg">{formData.name}</p>
-                                )}
+                        <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
+                                        Full Name
+                                    </label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            required
+                                            className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-900 font-bold text-lg bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">{formData.name}</p>
+                                    )}
+                                </div>
+
+                                {}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
+                                        Email Address
+                                    </label>
+                                    {isEditing ? (
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            required
+                                            className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-900 font-bold text-lg bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">{formData.email}</p>
+                                    )}
+                                </div>
+
+                                {}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
+                                        University
+                                    </label>
+                                    {isEditing ? (
+                                        <input
+                                            type="text"
+                                            name="university"
+                                            value={formData.university}
+                                            onChange={handleChange}
+                                            required
+                                            className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-900 font-bold text-lg bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">{formData.university}</p>
+                                    )}
+                                </div>
+
+                                {}
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-500 mb-1.5 uppercase tracking-wider">
+                                        Phone Number
+                                    </label>
+                                    {isEditing ? (
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleChange}
+                                            required
+                                            className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-900 font-bold text-lg bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">{formData.phone}</p>
+                                    )}
+                                </div>
                             </div>
 
-                            {/* Email */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email Address
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
-                                    />
-                                ) : (
-                                    <p className="text-gray-900 text-lg">{formData.email}</p>
-                                )}
-                            </div>
-
-                            {/* University */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    University
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        name="university"
-                                        value={formData.university}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
-                                    />
-                                ) : (
-                                    <p className="text-gray-900 text-lg">{formData.university}</p>
-                                )}
-                            </div>
-
-                            {/* Phone */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Phone Number
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="tel"
-                                        name="phone"
-                                        value={formData.phone}
-                                        onChange={handleChange}
-                                        required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
-                                    />
-                                ) : (
-                                    <p className="text-gray-900 text-lg">{formData.phone}</p>
-                                )}
-                            </div>
-
-                            {/* Avatar URL */}
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Profile Picture URL
-                                </label>
-                                {isEditing ? (
-                                    <input
-                                        type="url"
-                                        name="avatar"
-                                        value={formData.avatar}
-                                        onChange={handleChange}
-                                        placeholder="https://example.com/avatar.jpg"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
-                                    />
-                                ) : (
-                                    <p className="text-gray-900 text-lg">{formData.avatar || 'No avatar set'}</p>
-                                )}
-                            </div>
-
-                            {/* Action Buttons */}
+                            {}
                             {isEditing && (
-                                <div className="flex gap-4 pt-4">
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="flex-1 bg-[#ff6a3d] text-white py-3 rounded-lg font-semibold hover:bg-[#e55a2d] transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {loading ? 'Saving...' : 'Save Changes'}
-                                    </button>
+                                <div className="flex gap-4 pt-6 border-t border-slate-100">
                                     <button
                                         type="button"
                                         onClick={handleCancel}
-                                        className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition"
+                                        className="px-8 py-3.5 border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors"
                                     >
                                         Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={loading}
+                                        className="flex-1 bg-gradient-to-r from-brand-orange to-rose-500 text-white py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                    >
+                                        {loading ? (
+                                            <span className="flex items-center justify-center gap-2">
+                                                <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                Saving...
+                                            </span>
+                                        ) : (
+                                            'Save Changes'
+                                        )}
                                     </button>
                                 </div>
                             )}
                         </form>
 
-                        {/* Change Password Button */}
+                        {}
                         {!isEditing && (
-                            <div className="mt-8 pt-8 border-t border-gray-200">
+                            <div className="mt-10 pt-8 border-t border-slate-100">
                                 <button
                                     onClick={() => setShowPasswordModal(true)}
-                                    className="text-[#ff6a3d] font-medium hover:text-[#e55a2d] transition"
+                                    className="inline-flex items-center gap-2 text-brand-orange font-bold hover:text-rose-500 hover:bg-brand-orange/5 px-4 py-2 rounded-lg transition-colors -ml-4"
                                 >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                     Change Password
                                 </button>
                             </div>
@@ -320,17 +350,33 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* Password Change Modal */}
+            {}
             {showPasswordModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg max-w-md w-full p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                            Change Password
-                        </h3>
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+                    <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative animate-scale-up">
+                        <button 
+                            onClick={() => {
+                                setShowPasswordModal(false);
+                                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                                setError('');
+                            }}
+                            className="absolute top-6 right-6 text-slate-400 hover:text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-full p-2 transition-colors"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
 
-                        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                        <div className="text-center mb-8">
+                            <span className="inline-block p-3 rounded-2xl bg-brand-orange/10 text-brand-orange mb-3">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                            </span>
+                            <h3 className="text-2xl font-extrabold text-slate-900">
+                                Change Password
+                            </h3>
+                        </div>
+
+                        <form onSubmit={handlePasswordSubmit} className="space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="block text-sm font-bold text-slate-700 mb-1.5">
                                     Current Password
                                 </label>
                                 <input
@@ -339,12 +385,12 @@ const Profile = () => {
                                     value={passwordData.currentPassword}
                                     onChange={handlePasswordChange}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="block text-sm font-bold text-slate-700 mb-1.5">
                                     New Password
                                 </label>
                                 <input
@@ -354,12 +400,12 @@ const Profile = () => {
                                     onChange={handlePasswordChange}
                                     required
                                     minLength="6"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <label className="block text-sm font-bold text-slate-700 mb-1.5">
                                     Confirm New Password
                                 </label>
                                 <input
@@ -369,32 +415,17 @@ const Profile = () => {
                                     onChange={handlePasswordChange}
                                     required
                                     minLength="6"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#ff6a3d] focus:border-transparent"
+                                    className="appearance-none block w-full px-4 py-3 border border-slate-200 rounded-xl text-slate-900 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-brand-orange focus:bg-white transition-all font-medium"
                                 />
                             </div>
 
-                            <div className="flex gap-3 pt-4">
+                            <div className="pt-4">
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-1 bg-[#ff6a3d] text-white py-2 rounded-lg font-medium hover:bg-[#e55a2d] transition disabled:opacity-50"
+                                    className="w-full bg-gradient-to-r from-brand-orange to-rose-500 text-white py-3.5 rounded-xl font-bold hover:shadow-lg hover:shadow-brand-orange/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 >
                                     {loading ? 'Updating...' : 'Update Password'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setShowPasswordModal(false);
-                                        setPasswordData({
-                                            currentPassword: '',
-                                            newPassword: '',
-                                            confirmPassword: '',
-                                        });
-                                        setError('');
-                                    }}
-                                    className="px-6 py-2 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition"
-                                >
-                                    Cancel
                                 </button>
                             </div>
                         </form>

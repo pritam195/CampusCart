@@ -1,9 +1,9 @@
 const Cart = require("../models/Cart");
 const Product = require("../models/Products");
 
-// @desc    Get user's cart
-// @route   GET /api/cart
-// @access  Private
+
+
+
 exports.getCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ user: req.user._id }).populate({
@@ -35,14 +35,14 @@ exports.getCart = async (req, res) => {
   }
 };
 
-// @desc    Add item to cart
-// @route   POST /api/cart
-// @access  Private
+
+
+
 exports.addToCart = async (req, res) => {
   try {
     const { productId, quantity = 1 } = req.body;
 
-    // Check if product exists and is available
+    
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -59,7 +59,7 @@ exports.addToCart = async (req, res) => {
       });
     }
 
-    // Check if user is trying to add their own product
+    
     if (product.seller.toString() === req.user._id.toString()) {
       return res.status(400).json({
         success: false,
@@ -67,7 +67,7 @@ exports.addToCart = async (req, res) => {
       });
     }
 
-    // Find or create cart
+    
     let cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {
@@ -77,16 +77,16 @@ exports.addToCart = async (req, res) => {
       });
     }
 
-    // Check if product already in cart
+    
     const existingItemIndex = cart.items.findIndex(
       (item) => item.product.toString() === productId
     );
 
     if (existingItemIndex > -1) {
-      // Update quantity
+      
       cart.items[existingItemIndex].quantity += quantity;
     } else {
-      // Add new item
+      
       cart.items.push({
         product: productId,
         quantity,
@@ -96,7 +96,7 @@ exports.addToCart = async (req, res) => {
 
     await cart.save();
 
-    // Populate and return updated cart
+    
     cart = await Cart.findById(cart._id).populate({
       path: "items.product",
       select: "title price images category status seller",
@@ -119,9 +119,9 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-// @desc    Update cart item quantity
-// @route   PUT /api/cart/:itemId
-// @access  Private
+
+
+
 exports.updateCartItem = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -179,9 +179,9 @@ exports.updateCartItem = async (req, res) => {
   }
 };
 
-// @desc    Remove item from cart
-// @route   DELETE /api/cart/:itemId
-// @access  Private
+
+
+
 exports.removeFromCart = async (req, res) => {
   try {
     const { itemId } = req.params;
@@ -221,9 +221,9 @@ exports.removeFromCart = async (req, res) => {
   }
 };
 
-// @desc    Clear cart
-// @route   DELETE /api/cart
-// @access  Private
+
+
+
 exports.clearCart = async (req, res) => {
   try {
     let cart = await Cart.findOne({ user: req.user._id });
@@ -252,12 +252,12 @@ exports.clearCart = async (req, res) => {
   }
 };
 
-// @desc    Sync local cart with database
-// @route   POST /api/cart/sync
-// @access  Private
+
+
+
 exports.syncCart = async (req, res) => {
   try {
-    const { items } = req.body; // Array of { productId, quantity }
+    const { items } = req.body; 
 
     if (!items || !Array.isArray(items)) {
       return res.status(400).json({
@@ -275,10 +275,10 @@ exports.syncCart = async (req, res) => {
       });
     }
 
-    // Clear existing items
+    
     cart.items = [];
 
-    // Add all items from local storage
+    
     for (const item of items) {
       const product = await Product.findById(item.productId);
 

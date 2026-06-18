@@ -1,46 +1,30 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const sendEmail = async ({ to, subject, text }) => {
     try {
-        const emailUser = process.env.EMAIL_USER;
-        const emailPass = process.env.EMAIL_PASS;
-
-        if (!emailUser || !emailPass) {
-            console.error('[Email] EMAIL_USER or EMAIL_PASS not set in environment!');
+        if (!process.env.RESEND_API_KEY) {
+            console.error('[Email] RESEND_API_KEY is not set in environment!');
             return false;
         }
 
-        // Trim any accidental whitespace (common issue when copy-pasting into Render env)
-        const cleanUser = emailUser.trim();
-        const cleanPass = emailPass.trim().replace(/\s/g, ''); // remove any spaces from app password
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
-        console.log(`[Email] Attempting to send to: ${to}`);
-        console.log(`[Email] Using account: ${cleanUser}`);
-        console.log(`[Email] Pass length: ${cleanPass.length}`);
-
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
-            auth: {
-                user: cleanUser,
-                pass: cleanPass,
-            },
-        });
-
-        const info = await transporter.sendMail({
-            from: `"CampusCart" <${cleanUser}>`,
+        const { data, error } = await resend.emails.send({
+            from: 'CampusCart <onboarding@resend.dev>',
             to,
             subject,
             text,
         });
 
-        console.log(`[Email] ✅ Sent to ${to} | MessageId: ${info.messageId}`);
+        if (error) {
+            console.error('[Email] ❌ Resend error:', error);
+            return false;
+        }
+
+        console.log(`[Email] ✅ Sent to ${to} | ID: ${data.id}`);
         return true;
     } catch (error) {
         console.error('[Email] ❌ Send failed:', error.message);
-        console.error('[Email] Error code:', error.code);
-        console.error('[Email] Response:', error.response);
         return false;
     }
 };

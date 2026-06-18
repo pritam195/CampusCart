@@ -1,30 +1,36 @@
-const { Resend } = require('resend');
+const axios = require('axios');
 
 const sendEmail = async ({ to, subject, text }) => {
     try {
-        if (!process.env.RESEND_API_KEY) {
-            console.error('[Email] RESEND_API_KEY is not set in environment!');
+        if (!process.env.SENDGRID_API_KEY) {
+            console.error('[Email] SENDGRID_API_KEY is not set in environment!');
             return false;
         }
 
-        const resend = new Resend(process.env.RESEND_API_KEY);
+        const response = await axios.post(
+            'https://api.sendgrid.com/v3/mail/send',
+            {
+                personalizations: [{ to: [{ email: to }] }],
+                from: {
+                    email: process.env.EMAIL_USER, // must be verified in SendGrid
+                    name: 'CampusCart',
+                },
+                subject,
+                content: [{ type: 'text/plain', value: text }],
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.SENDGRID_API_KEY}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
 
-        const { data, error } = await resend.emails.send({
-            from: 'CampusCart <onboarding@resend.dev>',
-            to,
-            subject,
-            text,
-        });
-
-        if (error) {
-            console.error('[Email] ❌ Resend error:', error);
-            return false;
-        }
-
-        console.log(`[Email] ✅ Sent to ${to} | ID: ${data.id}`);
+        console.log(`[Email] ✅ Sent to ${to} | Status: ${response.status}`);
         return true;
     } catch (error) {
-        console.error('[Email] ❌ Send failed:', error.message);
+        const errMsg = error.response?.data?.errors?.[0]?.message || error.message;
+        console.error('[Email] ❌ Send failed:', errMsg);
         return false;
     }
 };

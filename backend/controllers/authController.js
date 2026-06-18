@@ -60,8 +60,12 @@ exports.sendOtp = async (req, res) => {
 
     if (!emailSent) {
       console.error(`Failed to send email OTP to ${email}`);
-      
-      
+      // Clean up the pending OTP since email failed
+      await OtpVerification.deleteMany({ email });
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send OTP email. Please check your email address and try again.",
+      });
     }
 
     

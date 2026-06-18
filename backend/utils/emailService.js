@@ -2,29 +2,32 @@ const nodemailer = require('nodemailer');
 
 const sendEmail = async ({ to, subject, text }) => {
     try {
-        
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            console.error('[Email] EMAIL_USER or EMAIL_PASS not set in environment!');
+            return false;
+        }
+
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
             auth: {
-                user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASS  
-            }
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
         });
 
-        
-        const mailOptions = {
+        const info = await transporter.sendMail({
             from: `"CampusCart" <${process.env.EMAIL_USER}>`,
             to,
             subject,
-            text
-        };
+            text,
+        });
 
-        
-        const info = await transporter.sendMail(mailOptions);
-        console.log(`Email sent to ${to}: ${info.messageId}`);
+        console.log(`[Email] Sent to ${to} | MessageId: ${info.messageId}`);
         return true;
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('[Email] Send failed:', error.message);
         return false;
     }
 };

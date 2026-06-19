@@ -173,11 +173,11 @@ const ChatPage = () => {
             <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none"></div>
             <div className="absolute bottom-20 -right-20 w-72 h-72 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col">
+            <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col min-h-0">
                 <div className="flex gap-6 h-full min-h-0 flex-1 relative z-10">
                     {}
-                    <div className={`w-full md:w-1/3 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden ${conversationId ? 'hidden md:flex' : 'flex'}`}>
-                        <div className="p-6 border-b border-slate-100 bg-white/50">
+                    <div className={`w-full md:w-1/3 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden min-h-0 ${conversationId ? 'hidden md:flex' : 'flex'}`}>
+                        <div className="shrink-0 p-6 border-b border-slate-100 bg-white/50">
                             <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-3">
                                 <span className="inline-block p-2 rounded-xl bg-brand-orange/10 text-brand-orange">
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
@@ -185,7 +185,7 @@ const ChatPage = () => {
                                 Messages
                             </h2>
                         </div>
-                        <div className="flex-1 overflow-y-auto custom-scrollbar">
+                        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
                             <ChatSidebar 
                                 conversations={conversations} 
                                 currentChatId={conversationId} 
@@ -197,11 +197,11 @@ const ChatPage = () => {
                     </div>
 
                     {}
-                    <div className={`w-full md:w-2/3 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden ${!conversationId ? 'hidden md:flex items-center justify-center bg-white/50' : 'flex'}`}>
+                    <div className={`w-full md:w-2/3 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden min-h-0 ${!conversationId ? 'hidden md:flex items-center justify-center bg-white/50' : 'flex'}`}>
                         {currentChat ? (
                             <>
                                 {}
-                                <div className="p-4 sm:p-6 border-b border-slate-100 bg-white/50 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
+                                <div className="shrink-0 p-4 sm:p-6 border-b border-slate-100 bg-white/50 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
                                     <div className="flex items-center gap-4">
                                         <button 
                                             className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition-colors"
@@ -223,7 +223,7 @@ const ChatPage = () => {
                                 </div>
 
                                 {}
-                                <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50/50 custom-scrollbar">
+                                <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 bg-slate-50/50 custom-scrollbar">
                                     <MessageContainer 
                                         messages={messages} 
                                         currentUser={user} 
@@ -231,7 +231,7 @@ const ChatPage = () => {
                                 </div>
 
                                 {}
-                                <div className="p-4 sm:p-6 border-t border-slate-100 bg-white/80 backdrop-blur-md">
+                                <div className="shrink-0 p-4 sm:p-6 border-t border-slate-100 bg-white/80 backdrop-blur-md">
                                     <MessageInput onSendMessage={handleSendMessage} />
                                 </div>
                             </>

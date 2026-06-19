@@ -4,6 +4,28 @@ CampusCart is a full-stack student marketplace platform that enables college stu
 
 ---
 
+## Output
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Browse Items
+![Browse Items](screenshots/browse.png)
+
+### Product Details
+![Product Details](screenshots/item.png)
+
+### Checkout Page
+![Checkout Page](screenshots/checkout.png)
+
+### My Orders
+![My Orders](screenshots/order.png)
+
+### Chat Interface
+![Chat Interface](screenshots/chats.png)
+
+---
+
 ## Features
 
 ### User Authentication
@@ -277,28 +299,6 @@ CLOUDINARY_API_SECRET
 * Role-based route protection (where applicable)
 * Environment variable configuration for secrets
 * CORS protection
-
----
-
-## Output
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Browse Items
-![Browse Items](screenshots/browse.png)
-
-### Product Details
-![Product Details](screenshots/item.png)
-
-### Checkout Page
-![Checkout Page](screenshots/checkout.png)
-
-### My Orders
-![My Orders](screenshots/order.png)
-
-### Chat Interface
-![Chat Interface](screenshots/chats.png)
 
 ---
 

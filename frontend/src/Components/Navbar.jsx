@@ -103,7 +103,7 @@ const Navbar = () => {
 
             {}
             <div className={`md:hidden absolute w-full bg-white/95 backdrop-blur-3xl border-b border-slate-200 shadow-xl transition-all duration-300 origin-top ${isOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
-                <div className="px-4 pt-2 pb-6 space-y-1">
+                <div className="px-4 pt-2 pb-6 space-y-1 max-h-[calc(100vh-80px)] overflow-y-auto">
                     <Link to="/" onClick={() => setIsOpen(false)} className={mobileLinkBaseClass}>Home</Link>
                     <Link to="/products" onClick={() => setIsOpen(false)} className={mobileLinkBaseClass}>Browse Items</Link>
 

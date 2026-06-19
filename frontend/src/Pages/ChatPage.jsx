@@ -168,13 +168,13 @@ const ChatPage = () => {
     };
 
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-slate-50 relative overflow-hidden flex flex-col">
+        <div className="h-[calc(100vh-80px)] bg-slate-50 relative overflow-hidden flex flex-col">
             {}
             <div className="absolute top-20 -left-20 w-72 h-72 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob pointer-events-none"></div>
             <div className="absolute bottom-20 -right-20 w-72 h-72 bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 flex-1 flex flex-col">
-                <div className="flex gap-6 h-full min-h-[600px] flex-1 relative z-10">
+                <div className="flex gap-6 h-full min-h-0 flex-1 relative z-10">
                     {}
                     <div className={`w-full md:w-1/3 bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden ${conversationId ? 'hidden md:flex' : 'flex'}`}>
                         <div className="p-6 border-b border-slate-100 bg-white/50">

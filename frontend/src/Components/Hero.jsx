@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Hero = () => {
     return (
-        <section className="relative overflow-hidden bg-slate-50 min-h-[calc(100vh-80px)] flex items-center pt-20 pb-20">
+        <section className="relative overflow-hidden bg-slate-50 min-h-[calc(100vh-80px)] flex items-center py-10 md:py-20">
             {}
             <div className="absolute top-0 -left-10 w-96 h-96 bg-brand-orange/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
             <div className="absolute top-0 -right-10 w-96 h-96 bg-rose-400/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -14,13 +14,13 @@ const Hero = () => {
                     <span className="inline-block py-1 px-3 rounded-full bg-brand-orange/10 text-brand-orange text-sm font-semibold mb-6 border border-brand-orange/20 tracking-wide">
                         🎓 Welcome to CampusCart
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-extrabold mb-8 tracking-tight text-slate-900 leading-tight">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold mb-8 tracking-tight text-slate-900 leading-tight">
                         Buy & Sell <br/>
                         <span className="bg-gradient-to-r from-brand-orange via-rose-500 to-indigo-500 bg-clip-text text-transparent">
                             Student Items
                         </span>
                     </h1>
-                    <p className="text-xl md:text-2xl mb-12 text-slate-600 font-light max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-lg sm:text-xl md:text-2xl mb-8 md:mb-12 text-slate-600 font-light max-w-2xl mx-auto leading-relaxed">
                         The ultimate marketplace for students to safely resell books, electronics, furniture, and more on campus!
                     </p>
                     <div className="flex flex-col sm:flex-row justify-center gap-5">

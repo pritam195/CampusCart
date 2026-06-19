@@ -92,7 +92,7 @@ const Cart = () => {
                                         <img
                                             src={item.images?.[0] || 'https://via.placeholder.com/100'}
                                             alt={item.title}
-                                            className="w-32 h-32 object-cover rounded-2xl bg-slate-50"
+                                            className="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-2xl bg-slate-50"
                                         />
                                         <div className="absolute inset-0 ring-1 ring-inset ring-slate-900/10 rounded-2xl"></div>
                                     </div>

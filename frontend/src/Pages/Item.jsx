@@ -157,7 +157,7 @@ const Item = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     {}
                     <div>
-                        <div className="bg-slate-50 rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-4 p-4 flex items-center justify-center h-[500px]">
+                        <div className="bg-slate-50 rounded-3xl shadow-sm border border-slate-100 overflow-hidden mb-4 p-4 flex items-center justify-center h-[300px] sm:h-[400px] lg:h-[500px]">
                             <img
                                 src={product.images?.[selectedImage] || 'https://via.placeholder.com/600x400'}
                                 alt={product.title}

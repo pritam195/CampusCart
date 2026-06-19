@@ -158,14 +158,14 @@ const MyOrders = () => {
                 ) : (
                     <div className="space-y-6">
                         {orders.map((order) => (
-                            <div key={order._id} className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-shadow p-6 sm:p-8">
+                            <div key={order._id} className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-8">
                                 <div className="flex flex-col lg:flex-row gap-8">
                                     {}
                                     <div className="relative shrink-0">
                                         <img
                                             src={order.product?.images?.[0] || 'https://via.placeholder.com/150'}
                                             alt={order.product?.title}
-                                            className="w-full lg:w-48 h-48 object-cover rounded-2xl bg-slate-50"
+                                            className="w-full lg:w-48 h-40 sm:h-48 object-cover rounded-2xl bg-slate-50"
                                         />
                                         <div className="absolute inset-0 ring-1 ring-inset ring-slate-900/10 rounded-2xl"></div>
                                     </div>

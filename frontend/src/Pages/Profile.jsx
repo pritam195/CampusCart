@@ -150,7 +150,7 @@ const Profile = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="bg-white/80 backdrop-blur-xl border border-white rounded-3xl shadow-2xl shadow-brand-orange/10 overflow-hidden">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-brand-orange to-rose-500 px-8 py-10 relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-brand-orange to-rose-500 px-5 md:px-8 py-8 md:py-10 relative overflow-hidden">
                         {/* Header Background Pattern */}
                         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
                         
@@ -197,7 +197,7 @@ const Profile = () => {
                     </div>
 
                     {}
-                    <div className="px-8 pt-6">
+                    <div className="px-5 md:px-8 pt-6">
                         {error && (
                             <div className="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl font-medium text-sm flex items-center gap-2 mb-2">
                                 <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -213,7 +213,7 @@ const Profile = () => {
                     </div>
 
                     {}
-                    <div className="p-8">
+                    <div className="p-5 md:p-8">
                         <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-4">
                             <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Personal Details</h2>
                             {!isEditing && (

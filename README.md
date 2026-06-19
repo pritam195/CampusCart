@@ -280,6 +280,28 @@ CLOUDINARY_API_SECRET
 
 ---
 
+## Output
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Browse Items
+![Browse Items](screenshots/browse.png)
+
+### Product Details
+![Product Details](screenshots/item.png)
+
+### Checkout Page
+![Checkout Page](screenshots/checkout.png)
+
+### My Orders
+![My Orders](screenshots/order.png)
+
+### Chat Interface
+![Chat Interface](screenshots/chats.png)
+
+---
+
 ## Future Enhancements
 
 * Real-time chat between buyers and sellers
